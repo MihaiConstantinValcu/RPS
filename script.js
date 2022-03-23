@@ -30,35 +30,91 @@ function playRound(playerSelection, computerSelection){
     }
 }
 
-function game(){
-    let playerScore = 0;
-    let computerScore = 0;
-    for(let i = 0; i < 5; i++){
-        let playerSelection = window.prompt("Enter your choice: ");
-        let computerSelection = computerPlay()
-        console.log('Ola');
-        switch(playRound(playerSelection,computerSelection)){
-            case 1:
-                console.log(`You Win! ${playerSelection} beats ${computerSelection}`);
-                playerScore++;
-                break;
-            case 2:
-                console.log(`You Lose! ${computerSelection} beats ${playerSelection}`);
-                computerScore++;
-                break;
-            case 3:
-                console.log('Draw');
-                playerScore++;
-                computerScore++;
+function game(playerSelection){
+
+    round++;
+    let computerSelection = computerPlay()
+    let result;
+    const paragraph = document.createElement('p');
+
+    switch(playRound(playerSelection,computerSelection)){
+        case 1:
+            result = `You Win! ${playerSelection} beats ${computerSelection}`
+            paragraph.setAttribute('style','color: green;')
+            playerScore++;
+            break;
+        case 2:
+            result = `You Lose! ${computerSelection} beats ${playerSelection}`
+            paragraph.setAttribute('style','color: red;')
+            computerScore++;
+            break;
+        case 3:
+            result = 'Draw';
+            paragraph.setAttribute('style','color: gray;')
+            playerScore++;
+            computerScore++;
+            break;
         }
+
+    paragraph.textContent = result;
+    history.appendChild(paragraph);
+
+    if(round == 5){
+        if(playerScore > computerScore)
+           gameResult.textContent = 'End of game - You won!';
+        else if(playerScore < computerScore)
+            gameResult.textContent = 'End of game - You lost!';
+        else gameResult.textContent = 'End of game - Draw!';
+
+    body.insertBefore(gameResult, buttonsContainer);
+    
+    buttons.forEach((button)=>{
+        button.classList.toggle('hidden');
+    })
+
+    playAgain.classList.toggle('hidden');
+    
+
     }
-    console.log(`Player Score: ${playerScore}`);
-    console.log(`Computer Score: ${computerScore}`);
-    if(playerScore > computerScore)
-        console.log('End of game - You won!');
-    else if(playerScore < computerScore)
-        console.log('End of game - You lost!');
-    else console.log('End of game - Draw!')
 }
 
-game();
+const body = document.querySelector('body');
+const buttonsContainer = document.querySelector('.buttons')
+const history = document.querySelector(".history-box");
+const buttons = document.querySelectorAll(".choice");
+const playAgain = document.querySelector(".play-again");
+const gameResult = document.createElement('h2');
+
+let round = 0;
+let playerScore = 0;
+let computerScore = 0;
+let playerChoice;
+
+buttons.forEach((button)=>{
+    button.addEventListener("click", ()=>{
+        playerChoice = button.textContent;
+        game(playerChoice);
+    })
+})
+
+playAgain.addEventListener('click', ()=>{
+    round = 0;
+    playerScore = 0;
+    computerScore = 0;
+
+    const paragraphs = document.querySelectorAll(".history-box p");
+
+    paragraphs.forEach((p)=>{
+        history.removeChild(p);
+    })
+
+    buttons.forEach((button)=>{
+        button.classList.toggle('hidden');
+    })
+    playAgain.classList.toggle('hidden');
+    body.removeChild(gameResult);
+    
+
+})
+
+//game();
